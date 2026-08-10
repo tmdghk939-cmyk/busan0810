@@ -1,11 +1,17 @@
 # 울산광역시교육청 통합예약시스템
 
-순수 HTML/CSS/Vanilla JS로 구성된 단일 페이지 목업입니다.
+GitHub Pages용 정적 웹사이트입니다.
 
-## 실행
-`index.html`을 브라우저에서 열면 바로 실행됩니다.
+## 파일 구조
 
-## GitHub Pages
-1. 이 폴더의 `index.html`을 GitHub 저장소에 업로드합니다.
-2. 저장소 Settings → Pages에서 배포 소스를 설정합니다.
-3. `index.html`이 루트에 있으므로 별도 빌드 과정이 필요하지 않습니다.
+- `index.html` — HTML 구조
+- `css/style.css` — 디자인 및 반응형 스타일
+- `js/app.js` — 검색, 캘린더, 예약/취소, 모달 등 인터랙션
+
+## GitHub Pages 배포
+
+저장소 루트에 위 구조 그대로 업로드한 뒤:
+
+`Settings → Pages → Deploy from a branch → main / (root) → Save`
+
+별도의 빌드나 프레임워크 설치가 필요 없습니다.

@@ -1,137 +1,3 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="울산광역시교육청 통합예약시스템">
-<title>울산광역시교육청 통합예약</title>
-<link rel="stylesheet" href="css/style.css">
-
-</head>
-<body>
-<header class="header">
-  <div class="container header-inner">
-    <a class="brand" href="#top" aria-label="울산광역시교육청 통합예약 홈">
-      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
-        <circle cx="32" cy="10" r="7" fill="#D90070"/>
-        <path d="M23 18c-5 4-9 9-10 15 7 2 13 1 18-3 4-3 7-7 8-12-6-3-11-2-16 0Z" fill="#F5A000"/>
-        <path d="M12 35c5 10 13 15 23 16 7 1 13-1 17-5-5-6-12-9-20-9-7 0-13 0-20-2Z" fill="#009B45"/>
-        <path d="M11 48c7 8 18 12 29 10 6-1 11-4 14-8-9-3-18-3-27-1-6 1-11 1-16-1Z" fill="#0756A5"/>
-      </svg>
-      울산광역시교육청 통합예약
-    </a>
-    <nav class="nav" aria-label="주 메뉴">
-      <button class="active" data-scroll="programs">통합예약</button><button data-scroll="my">예약조회</button><button data-scroll="my">마이페이지</button><button data-scroll="notice">공지사항</button>
-    </nav>
-    <button class="menu-btn" id="menuBtn" aria-label="메뉴 열기">☰</button>
-  </div>
-  <nav class="mobile-nav container" id="mobileNav">
-    <button data-scroll="programs">통합예약</button><button data-scroll="my">예약조회</button><button data-scroll="my">마이페이지</button><button data-scroll="notice">공지사항</button>
-  </nav>
-</header>
-
-<main id="top">
-<section class="hero">
-  <div class="container hero-content">
-    <div class="eyebrow"><span class="dot"></span> 울산교육의 다양한 경험을 한 곳에서</div>
-    <h1>교육의 경험을 예약하세요</h1>
-    <p>학생 체험·수련원·교육 프로그램을 한 곳에서 편리하게 찾아보고 예약할 수 있습니다.</p>
-    <form class="search-box" id="searchForm">
-      <div class="field"><input id="keyword" placeholder="프로그램명, 기관명 검색" aria-label="검색어"></div>
-      <div class="field"><select id="category" aria-label="카테고리"><option value="">전체 카테고리</option><option>학생 체험</option><option>수련원 예약</option><option>교육 신청</option><option>시설/공간 대여</option><option>방학 캠프/행사</option><option>진로 체험 / 교직원 연수</option></select></div>
-      <div class="field"><select id="target" aria-label="대상"><option value="">전체 대상</option><option>학생</option><option>학부모</option><option>교직원</option><option>일반</option></select></div>
-      <div class="field"><input id="dateFilter" type="date" aria-label="이용 날짜"></div>
-      <button class="search-btn" type="submit">검색</button>
-    </form>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <div class="section-head"><div><h2>빠른 예약</h2><p>원하는 교육 서비스를 바로 찾아보세요.</p></div></div>
-    <div class="categories" id="categories"></div>
-  </div>
-</section>
-
-<section class="section soft" id="status">
-  <div class="container">
-    <div class="section-head"><div><h2>예약 현황</h2><p id="selectedDateText">날짜를 선택하면 해당 날짜의 프로그램을 확인할 수 있습니다.</p></div></div>
-    <div class="calendar-wrap">
-      <div class="panel">
-        <div class="calendar-top"><button class="cal-nav" id="prevMonth" aria-label="이전 달">‹</button><h3 id="monthTitle"></h3><button class="cal-nav" id="nextMonth" aria-label="다음 달">›</button></div>
-        <div class="week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
-        <div class="days" id="calendarDays"></div>
-        <div class="legend"><span><i style="background:#009B45"></i>예약 가능</span><span><i style="background:#F5A000"></i>마감 임박</span><span><i style="background:#8b969f"></i>마감</span><span><i style="background:#D90070"></i>특별 접수</span></div>
-      </div>
-      <div class="panel">
-        <h3 style="margin-top:0">오늘의 예약 상태</h3>
-        <div class="status-summary">
-          <div class="status-card"><b id="availableCount">0</b><span>예약 가능</span></div>
-          <div class="status-card"><b id="closingCount">0</b><span>마감 임박</span></div>
-          <div class="status-card"><b id="closedCount">0</b><span>마감</span></div>
-          <div class="status-card"><b id="specialCount">0</b><span>특별 접수</span></div>
-        </div>
-        <div style="margin-top:20px;padding:15px;border-radius:12px;background:#eef7f2;color:#17683d"><strong>예약 팁</strong><br>인기 프로그램은 조기 마감될 수 있으니 신청 가능 좌석을 확인해 주세요.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section" id="programs">
-  <div class="container">
-    <div class="section-head"><div><h2>추천 프로그램</h2><p id="resultText"></p></div></div>
-    <div class="tabs" id="statusTabs"><button class="tab active" data-status="all">오늘 예약 가능</button><button class="tab" data-status="popular">이번 주 인기</button><button class="tab" data-status="closing">마감 임박</button></div>
-    <div class="grid" id="programGrid"></div>
-  </div>
-</section>
-
-<section class="section soft" id="my">
-  <div class="container">
-    <div class="section-head"><div><h2>나의 예약</h2><p>예약 상태를 확인하고 간편하게 관리하세요.</p></div></div>
-    <div class="status-summary" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
-      <div class="status-card"><b id="myAll">0</b><span>전체</span></div><div class="status-card"><b id="myPending">0</b><span>승인대기</span></div><div class="status-card"><b id="myDone">0</b><span>예약완료</span></div><div class="status-card"><b id="myUsed">0</b><span>이용완료</span></div>
-    </div>
-    <div class="tabs" id="myTabs"><button class="tab active" data-my="전체">전체</button><button class="tab" data-my="승인대기">승인대기</button><button class="tab" data-my="예약완료">예약완료</button><button class="tab" data-my="이용완료">이용완료</button><button class="tab" data-my="취소">취소</button></div>
-    <div class="reservation-list" id="reservationList"></div>
-  </div>
-</section>
-
-<section class="section" id="notice">
-  <div class="container">
-    <div class="section-head"><div><h2>공지사항</h2><p>통합예약 서비스 이용에 필요한 안내입니다.</p></div></div>
-    <div class="panel">
-      <p><strong>예약 전 확인사항</strong> · 대상 및 운영일을 확인한 후 신청해 주세요.</p>
-      <p><strong>취소 안내</strong> · 프로그램별 취소 가능 기한이 다를 수 있습니다.</p>
-      <p style="margin-bottom:0"><strong>문의</strong> · 울산광역시교육청 통합예약 고객지원 052-210-5200</p>
-    </div>
-  </div>
-</section>
-</main>
-
-<footer>
-  <div class="container footer-inner">
-    <div><div class="footer-title">울산광역시교육청 통합예약</div><div>[44540] 울산광역시 중구 북부순환도로 375</div><div>대표전화 052-210-5200</div></div>
-    <div class="footer-links"><a href="#notice">개인정보처리방침</a><a href="#notice">이용약관</a><a href="#notice">사이트맵</a></div>
-  </div>
-</footer>
-
-<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-  <div class="modal-box">
-    <div class="modal-head"><h2 id="modalTitle"></h2><button class="close" id="closeModal" aria-label="닫기">×</button></div>
-    <div class="modal-body">
-      <div class="modal-tabs"><button class="active" data-mtab="detail">프로그램 상세</button><button data-mtab="status">등록 현황</button><button data-mtab="notice">공지 & 지도</button></div>
-      <div id="modalContent"></div>
-      <div class="booking-box">
-        <strong>예약 인원</strong>
-        <div class="qty"><button id="minus" aria-label="인원 감소">−</button><strong id="qty">1</strong><button id="plus" aria-label="인원 증가">+</button><span id="capacityHint" style="color:#66717c;font-size:13px"></span></div>
-        <button class="primary-btn" id="submitBooking" style="width:100%;margin-top:16px">예약 신청하기</button>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="toast" id="toast" role="status"></div>
-
-<script>
 const categories=[
  ["학생 체험","학생을 위한 체험 프로그램","#009B45","★"],
  ["수련원 예약","수련원·야영장","#F5A000","⌂"],
@@ -211,4 +77,12 @@ function cancelBooking(rid){const b=bookings.find(x=>x.id===rid);if(!b)return;co
 $("#searchForm").onsubmit=e=>{e.preventDefault();selectedDate=null;renderCalendar();renderPrograms();document.querySelector("#programs").scrollIntoView({behavior:"smooth"})};
 $("#prevMonth").onclick=()=>{calendarDate.setMonth(calendarDate.getMonth()-1);renderCalendar()};$("#nextMonth").onclick=()=>{calendarDate.setMonth(calendarDate.getMonth()+1);renderCalendar()};
 document.querySelectorAll("#statusTabs .tab").forEach(b=>b.onclick=()=>{document.querySelectorAll("#statusTabs .tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");currentStatus=b.dataset.status;renderPrograms()});
-document.querySelecto<script src="js/app.js"></script>
+document.querySelectorAll("#myTabs .tab").forEach(b=>b.onclick=()=>{document.querySelectorAll("#myTabs .tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");myFilter=b.dataset.my;renderReservations()});
+document.querySelectorAll(".modal-tabs button").forEach(b=>b.onclick=()=>renderModalTab(b.dataset.mtab));
+$("#closeModal").onclick=closeModal;$("#modal").onclick=e=>{if(e.target.id==="modal")closeModal()};document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+$("#minus").onclick=()=>{if(currentQty>1){currentQty--;$("#qty").textContent=currentQty;updateCapacity()}};$("#plus").onclick=()=>{if(currentProgram&&currentQty<currentProgram.capacity-currentProgram.booked){currentQty++;$("#qty").textContent=currentQty;updateCapacity()}};
+$("#submitBooking").onclick=()=>{if(!currentProgram)return;const left=currentProgram.capacity-currentProgram.booked;if(currentQty>left){toast("신청 가능한 좌석이 부족합니다.");return}currentProgram.booked+=currentQty;bookings.push({id:"R-"+Math.floor(1000+Math.random()*9000),programId:currentProgram.id,qty:currentQty,status:"예약완료"});toast("예약 신청이 완료되었습니다.");closeModal();renderPrograms();document.querySelector("#my").scrollIntoView({behavior:"smooth"})};
+document.querySelectorAll("[data-scroll]").forEach(b=>b.onclick=()=>{document.getElementById(b.dataset.scroll).scrollIntoView({behavior:"smooth"});$("#mobileNav").classList.remove("show")});
+$("#menuBtn").onclick=()=>$("#mobileNav").classList.toggle("show");
+document.getElementById("categories").addEventListener("click",e=>{const b=e.target.closest(".cat");if(!b)return;$("#category").value=b.dataset.cat;selectedDate=null;renderCalendar();renderPrograms();document.querySelector("#programs").scrollIntoView({behavior:"smooth"})});
+renderCategories();renderCalendar();renderPrograms();
