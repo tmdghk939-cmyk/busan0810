@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="울산광역시교육청 통합예약시스템">
+<title>울산광역시교육청 통합예약</title>
+<style>
+:root{
+  --bg-main:#fff; --bg-soft:#f8f9fa; --primary-blue:#0756A5;
+  --secondary-green:#009B45; --accent-orange:#F5A000; --accent-magenta:#D90070;
+  --text:#17212b; --muted:#66717c; --line:#e4e9ee; --shadow:0 4px 20px rgba(0,0,0,.06);
+  --radius:16px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans KR","Malgun Gothic",Arial,sans-serif;color:var(--text);background:var(--bg-main);font-size:16px;line-height:1.6}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(217,0,112,.35);outline-offset:2px}
+a{color:inherit;text-decoration:none}
+.container{width:min(1180px,calc(100% - 40px));margin:auto}
+.header{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line)}
+.header-inner{height:78px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:900;color:var(--primary-blue);font-size:19px}
+.logo{width:48px;height:48px;flex:none}
+.nav{display:flex;gap:6px}
+.nav button{border:0;background:transparent;padding:10px 14px;border-radius:10px;font-weight:700;color:#34414d}
+.nav button:hover,.nav button.active{background:#eef5fb;color:var(--primary-blue)}
+.menu-btn{display:none;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px}
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#edf6ff 0%,#fff 62%,#fff5fa 100%);padding:74px 0 86px}
+.hero:after{content:"";position:absolute;left:-8%;right:-8%;bottom:-70px;height:130px;background:#fff;border-radius:50% 50% 0 0/70% 70% 0 0}
+.hero-content{position:relative;z-index:2}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--primary-blue);font-weight:800;margin-bottom:12px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--accent-magenta)}
+h1{font-size:clamp(30px,4vw,48px);line-height:1.2;margin:0 0 18px;letter-spacing:-1.5px}
+.hero p{max-width:760px;color:#50606e;font-size:18px;margin:0 0 30px}
+.search-box{background:#fff;border:1px solid rgba(7,86,165,.12);box-shadow:0 10px 35px rgba(7,86,165,.1);border-radius:18px;padding:16px;display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr auto;gap:10px}
+.field{min-width:0}
+.field input,.field select{width:100%;height:50px;border:1px solid var(--line);border-radius:10px;padding:0 13px;background:#fff;color:var(--text)}
+.search-btn,.primary-btn{height:50px;border:0;border-radius:10px;background:var(--primary-blue);color:#fff;font-weight:800;padding:0 20px}
+.search-btn:hover,.primary-btn:hover{filter:brightness(.94)}
+.section{padding:62px 0}
+.section.soft{background:var(--bg-soft)}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:24px}
+.section-head h2{margin:0;font-size:28px;letter-spacing:-.8px}
+.section-head p{margin:4px 0 0;color:var(--muted)}
+.categories{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.cat{border:1px solid var(--line);background:#fff;border-radius:15px;padding:20px 14px;min-height:140px;text-align:left;box-shadow:var(--shadow);transition:.2s}
+.cat:hover{transform:translateY(-3px);border-color:#ccd8e2}
+.cat-icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;margin-bottom:12px}
+.cat strong{display:block;font-size:16px}.cat span{display:block;color:var(--muted);font-size:13px;margin-top:3px}
+.calendar-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
+.calendar-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.calendar-top h3{margin:0;font-size:20px}
+.cal-nav{display:flex;gap:6px}.cal-nav button{border:1px solid var(--line);background:#fff;border-radius:8px;width:34px;height:34px}
+.week,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.week div{text-align:center;color:#78838d;font-size:13px;padding:6px}
+.day{min-height:66px;border:1px solid transparent;border-radius:9px;background:#fafbfd;padding:6px;cursor:pointer;text-align:left}
+.day:hover{border-color:#bdd2e5}.day.muted{opacity:.35}.day.selected{border-color:var(--primary-blue);background:#eef6fd}
+.day-num{font-weight:800;font-size:13px}.count{display:inline-block;margin-top:5px;font-size:11px;color:var(--primary-blue);font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;color:#66717c;font-size:13px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.status-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+.status-card{border:1px solid var(--line);border-radius:12px;padding:15px}
+.status-card b{display:block;font-size:22px}.status-card span{font-size:13px;color:var(--muted)}
+.tabs{display:flex;gap:7px;overflow:auto;margin-bottom:20px}
+.tab{white-space:nowrap;border:1px solid var(--line);background:#fff;padding:9px 14px;border-radius:999px;font-weight:700;color:#53606c}
+.tab.active{background:var(--primary-blue);color:#fff;border-color:var(--primary-blue)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.thumb{height:150px;position:relative;overflow:hidden}
+.thumb svg{width:100%;height:100%}
+.badge{position:absolute;top:12px;left:12px;border-radius:999px;padding:5px 9px;background:#fff;font-size:12px;font-weight:900}
+.card-body{padding:18px;display:flex;flex-direction:column;flex:1}
+.meta{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+.tag{font-size:12px;padding:4px 8px;border-radius:999px;background:#eef5fb;color:var(--primary-blue);font-weight:800}
+.card h3{margin:0 0 7px;font-size:19px;line-height:1.35}
+.agency,.date{color:var(--muted);font-size:13px}
+.progress-row{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:13px;font-weight:800}
+.progress{height:8px;background:#e9eef2;border-radius:99px;overflow:hidden;margin:7px 0 13px}
+.progress span{display:block;height:100%;border-radius:99px}
+.card-actions{display:flex;gap:8px}.card-actions button{flex:1;height:42px;border-radius:9px;font-weight:800}
+.detail-btn{border:1px solid #cbd5dd;background:#fff;color:#394650}.book-btn{border:0;background:var(--primary-blue);color:#fff}
+.empty{padding:45px;text-align:center;color:var(--muted);border:1px dashed #ccd5dd;border-radius:14px;grid-column:1/-1}
+.reservation-list{display:grid;gap:12px}
+.reservation{display:flex;align-items:center;justify-content:space-between;gap:18px;border:1px solid var(--line);border-radius:13px;padding:16px;background:#fff}
+.reservation-info strong{display:block}.reservation-info span{color:var(--muted);font-size:13px}
+.cancel{border:1px solid #e0c2cf;background:#fff;color:#b4005d;border-radius:9px;padding:8px 12px;font-weight:800}
+footer{background:#17212b;color:#dbe2e7;padding:38px 0}.footer-inner{display:flex;justify-content:space-between;gap:30px}.footer-title{font-weight:900;color:#fff;margin-bottom:7px}.footer-links{display:flex;gap:16px;font-size:14px}.footer-links a:hover{text-decoration:underline}
+.modal{position:fixed;inset:0;background:rgba(16,28,39,.55);z-index:50;display:none;align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}.modal-box{width:min(760px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-head{display:flex;justify-content:space-between;gap:20px;padding:22px;border-bottom:1px solid var(--line)}
+.modal-head h2{margin:0;font-size:23px}.close{border:0;background:#f2f4f6;border-radius:50%;width:36px;height:36px;font-size:20px}
+.modal-body{padding:22px}.modal-tabs{display:flex;border-bottom:1px solid var(--line);margin-bottom:20px}.modal-tabs button{border:0;background:none;padding:11px 15px;font-weight:800;color:#65717b}.modal-tabs button.active{color:var(--primary-blue);border-bottom:3px solid var(--primary-blue)}
+.booking-box{background:#f8fafc;border:1px solid var(--line);border-radius:13px;padding:17px;margin-top:18px}
+.qty{display:flex;align-items:center;gap:14px;margin-top:12px}.qty button{width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:20px}.qty strong{min-width:30px;text-align:center}
+.toast{position:fixed;right:22px;bottom:22px;z-index:80;background:#17212b;color:#fff;padding:14px 18px;border-radius:11px;box-shadow:0 8px 30px rgba(0,0,0,.18);transform:translateY(20px);opacity:0;pointer-events:none;transition:.25s}.toast.show{transform:translateY(0);opacity:1}
+.mobile-nav{display:none}
+@media(max-width:1050px){.categories{grid-template-columns:repeat(3,1fr)}.search-box{grid-template-columns:repeat(2,1fr)}.search-btn{width:100%}.calendar-wrap{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:720px){.container{width:min(100% - 28px,1180px)}.header-inner{height:68px}.nav{display:none}.menu-btn{display:block}.mobile-nav{position:absolute;top:68px;left:0;right:0;background:#fff;border-bottom:1px solid var(--line);padding:10px 14px}.mobile-nav.show{display:grid}.mobile-nav button{border:0;background:#fff;text-align:left;padding:12px;border-radius:8px;font-weight:700}.hero{padding:52px 0 70px}.hero p{font-size:16px}.search-box{grid-template-columns:1fr}.categories{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.section{padding:45px 0}.day{min-height:56px}.footer-inner{flex-direction:column}.reservation{align-items:flex-start;flex-direction:column}.footer-links{flex-wrap:wrap}}
+@media(max-width:430px){.categories{grid-template-columns:1fr 1fr}.cat{min-height:125px;padding:15px 12px}.calendar-wrap .panel{padding:15px}.day{padding:4px}.count{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="container header-inner">
+    <a class="brand" href="#top" aria-label="울산광역시교육청 통합예약 홈">
+      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="32" cy="10" r="7" fill="#D90070"/>
+        <path d="M23 18c-5 4-9 9-10 15 7 2 13 1 18-3 4-3 7-7 8-12-6-3-11-2-16 0Z" fill="#F5A000"/>
+        <path d="M12 35c5 10 13 15 23 16 7 1 13-1 17-5-5-6-12-9-20-9-7 0-13 0-20-2Z" fill="#009B45"/>
+        <path d="M11 48c7 8 18 12 29 10 6-1 11-4 14-8-9-3-18-3-27-1-6 1-11 1-16-1Z" fill="#0756A5"/>
+      </svg>
+      울산광역시교육청 통합예약
+    </a>
+    <nav class="nav" aria-label="주 메뉴">
+      <button class="active" data-scroll="programs">통합예약</button><button data-scroll="my">예약조회</button><button data-scroll="my">마이페이지</button><button data-scroll="notice">공지사항</button>
+    </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="메뉴 열기">☰</button>
+  </div>
+  <nav class="mobile-nav container" id="mobileNav">
+    <button data-scroll="programs">통합예약</button><button data-scroll="my">예약조회</button><button data-scroll="my">마이페이지</button><button data-scroll="notice">공지사항</button>
+  </nav>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="container hero-content">
+    <div class="eyebrow"><span class="dot"></span> 울산교육의 다양한 경험을 한 곳에서</div>
+    <h1>교육의 경험을 예약하세요</h1>
+    <p>학생 체험·수련원·교육 프로그램을 한 곳에서 편리하게 찾아보고 예약할 수 있습니다.</p>
+    <form class="search-box" id="searchForm">
+      <div class="field"><input id="keyword" placeholder="프로그램명, 기관명 검색" aria-label="검색어"></div>
+      <div class="field"><select id="category" aria-label="카테고리"><option value="">전체 카테고리</option><option>학생 체험</option><option>수련원 예약</option><option>교육 신청</option><option>시설/공간 대여</option><option>방학 캠프/행사</option><option>진로 체험 / 교직원 연수</option></select></div>
+      <div class="field"><select id="target" aria-label="대상"><option value="">전체 대상</option><option>학생</option><option>학부모</option><option>교직원</option><option>일반</option></select></div>
+      <div class="field"><input id="dateFilter" type="date" aria-label="이용 날짜"></div>
+      <button class="search-btn" type="submit">검색</button>
+    </form>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head"><div><h2>빠른 예약</h2><p>원하는 교육 서비스를 바로 찾아보세요.</p></div></div>
+    <div class="categories" id="categories"></div>
+  </div>
+</section>
+
+<section class="section soft" id="status">
+  <div class="container">
+    <div class="section-head"><div><h2>예약 현황</h2><p id="selectedDateText">날짜를 선택하면 해당 날짜의 프로그램을 확인할 수 있습니다.</p></div></div>
+    <div class="calendar-wrap">
+      <div class="panel">
+        <div class="calendar-top"><button class="cal-nav" id="prevMonth" aria-label="이전 달">‹</button><h3 id="monthTitle"></h3><button class="cal-nav" id="nextMonth" aria-label="다음 달">›</button></div>
+        <div class="week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
+        <div class="days" id="calendarDays"></div>
+        <div class="legend"><span><i style="background:#009B45"></i>예약 가능</span><span><i style="background:#F5A000"></i>마감 임박</span><span><i style="background:#8b969f"></i>마감</span><span><i style="background:#D90070"></i>특별 접수</span></div>
+      </div>
+      <div class="panel">
+        <h3 style="margin-top:0">오늘의 예약 상태</h3>
+        <div class="status-summary">
+          <div class="status-card"><b id="availableCount">0</b><span>예약 가능</span></div>
+          <div class="status-card"><b id="closingCount">0</b><span>마감 임박</span></div>
+          <div class="status-card"><b id="closedCount">0</b><span>마감</span></div>
+          <div class="status-card"><b id="specialCount">0</b><span>특별 접수</span></div>
+        </div>
+        <div style="margin-top:20px;padding:15px;border-radius:12px;background:#eef7f2;color:#17683d"><strong>예약 팁</strong><br>인기 프로그램은 조기 마감될 수 있으니 신청 가능 좌석을 확인해 주세요.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="programs">
+  <div class="container">
+    <div class="section-head"><div><h2>추천 프로그램</h2><p id="resultText"></p></div></div>
+    <div class="tabs" id="statusTabs"><button class="tab active" data-status="all">오늘 예약 가능</button><button class="tab" data-status="popular">이번 주 인기</button><button class="tab" data-status="closing">마감 임박</button></div>
+    <div class="grid" id="programGrid"></div>
+  </div>
+</section>
+
+<section class="section soft" id="my">
+  <div class="container">
+    <div class="section-head"><div><h2>나의 예약</h2><p>예약 상태를 확인하고 간편하게 관리하세요.</p></div></div>
+    <div class="status-summary" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+      <div class="status-card"><b id="myAll">0</b><span>전체</span></div><div class="status-card"><b id="myPending">0</b><span>승인대기</span></div><div class="status-card"><b id="myDone">0</b><span>예약완료</span></div><div class="status-card"><b id="myUsed">0</b><span>이용완료</span></div>
+    </div>
+    <div class="tabs" id="myTabs"><button class="tab active" data-my="전체">전체</button><button class="tab" data-my="승인대기">승인대기</button><button class="tab" data-my="예약완료">예약완료</button><button class="tab" data-my="이용완료">이용완료</button><button class="tab" data-my="취소">취소</button></div>
+    <div class="reservation-list" id="reservationList"></div>
+  </div>
+</section>
+
+<section class="section" id="notice">
+  <div class="container">
+    <div class="section-head"><div><h2>공지사항</h2><p>통합예약 서비스 이용에 필요한 안내입니다.</p></div></div>
+    <div class="panel">
+      <p><strong>예약 전 확인사항</strong> · 대상 및 운영일을 확인한 후 신청해 주세요.</p>
+      <p><strong>취소 안내</strong> · 프로그램별 취소 가능 기한이 다를 수 있습니다.</p>
+      <p style="margin-bottom:0"><strong>문의</strong> · 울산광역시교육청 통합예약 고객지원 052-210-5200</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container footer-inner">
+    <div><div class="footer-title">울산광역시교육청 통합예약</div><div>[44540] 울산광역시 중구 북부순환도로 375</div><div>대표전화 052-210-5200</div></div>
+    <div class="footer-links"><a href="#notice">개인정보처리방침</a><a href="#notice">이용약관</a><a href="#notice">사이트맵</a></div>
+  </div>
+</footer>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-box">
+    <div class="modal-head"><h2 id="modalTitle"></h2><button class="close" id="closeModal" aria-label="닫기">×</button></div>
+    <div class="modal-body">
+      <div class="modal-tabs"><button class="active" data-mtab="detail">프로그램 상세</button><button data-mtab="status">등록 현황</button><button data-mtab="notice">공지 & 지도</button></div>
+      <div id="modalContent"></div>
+      <div class="booking-box">
+        <strong>예약 인원</strong>
+        <div class="qty"><button id="minus" aria-label="인원 감소">−</button><strong id="qty">1</strong><button id="plus" aria-label="인원 증가">+</button><span id="capacityHint" style="color:#66717c;font-size:13px"></span></div>
+        <button class="primary-btn" id="submitBooking" style="width:100%;margin-top:16px">예약 신청하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const categories=[
+ ["학생 체험","학생을 위한 체험 프로그램","#009B45","★"],
+ ["수련원 예약","수련원·야영장","#F5A000","⌂"],
+ ["교육 신청","학부모·교직원 교육","#D90070","◎"],
+ ["시설/공간 대여","교육시설 공간 예약","#0756A5","□"],
+ ["방학 캠프/행사","방학 특별 프로그램","#F5A000","✦"],
+ ["진로 체험 / 교직원 연수","진로·직무 역량","#D90070","↗"]
+];
+const programs=[
+ {id:1,cat:"학생 체험",target:"학생",title:"별빛 우주과학 체험교실",agency:"울산과학관",date:"2026-08-12",end:"2026-08-12",capacity:30,booked:18,special:false,desc:"천체관측과 우주과학 실험을 통해 과학적 호기심을 키우는 체험 프로그램입니다.",color:"#0756A5"},
+ {id:2,cat:"수련원 예약",target:"학생",title:"여름 바다 생태 수련활동",agency:"울산학생교육원",date:"2026-08-15",end:"2026-08-17",capacity:40,booked:32,special:false,desc:"해양 생태 탐방과 공동체 활동으로 자연과 함께 배우는 수련 프로그램입니다.",color:"#F5A000"},
+ {id:3,cat:"교육 신청",target:"학부모",title:"디지털 시대 학부모 교육",agency:"울산학부모지원센터",date:"2026-08-20",end:"2026-08-20",capacity:100,booked:54,special:true,desc:"자녀의 디지털 생활을 이해하고 가정에서 실천할 수 있는 교육 방법을 안내합니다.",color:"#D90070"},
+ {id:4,cat:"시설/공간 대여",target:"일반",title:"교육문화회관 다목적홀",agency:"울산교육문화회관",date:"2026-08-22",end:"2026-08-22",capacity:20,booked:20,special:false,desc:"교육·문화 행사에 활용할 수 있는 쾌적한 다목적 공간입니다.",color:"#0756A5"},
+ {id:5,cat:"방학 캠프/행사",target:"학생",title:"AI 창의융합 여름캠프",agency:"울산교육연구정보원",date:"2026-08-25",end:"2026-08-27",capacity:24,booked:16,special:true,desc:"AI와 메이커 활동을 결합한 프로젝트형 창의융합 캠프입니다.",color:"#009B45"},
+ {id:6,cat:"진로 체험 / 교직원 연수",target:"교직원",title:"교원 미래교육 역량 연수",agency:"울산광역시교육청",date:"2026-08-28",end:"2026-08-28",capacity:60,booked:43,special:false,desc:"미래교육 정책과 수업 혁신 사례를 공유하는 교원 대상 연수입니다.",color:"#D90070"},
+ {id:7,cat:"학생 체험",target:"학생",title:"우리 고장 역사 탐방",agency:"울산교육박물관",date:"2026-09-03",end:"2026-09-03",capacity:25,booked:7,special:false,desc:"울산의 역사와 문화를 현장에서 살펴보는 교육형 탐방입니다.",color:"#009B45"},
+ {id:8,cat:"수련원 예약",target:"학생",title:"숲속 마음성장 캠프",agency:"울산수련원",date:"2026-09-06",end:"2026-09-08",capacity:35,booked:28,special:false,desc:"숲 체험과 협동 활동을 통해 학생의 자기성장과 공동체성을 돕습니다.",color:"#F5A000"}
+];
+let bookings=[
+ {id:"R-1001",programId:1,qty:2,status:"예약완료"},
+ {id:"R-1002",programId:3,qty:1,status:"승인대기"}
+];
+let currentProgram=null,currentQty=1,calendarDate=new Date(2026,7,1),selectedDate=null,currentStatus="all",myFilter="전체";
+const $=s=>document.querySelector(s);
+function statusOf(p){const r=p.booked/p.capacity;if(r>=1)return ["마감","closed"];if(r>=.7)return ["마감 임박","closing"];return ["예약 가능","available"]}
+function iconSVG(text,color){return `<svg viewBox="0 0 400 150" aria-hidden="true"><path d="M-20 120 C90 15 180 170 270 60 S420 45 430 130 L430 170 L-20 170Z" fill="${color}" opacity=".13"/><circle cx="320" cy="35" r="38" fill="${color}" opacity=".12"/><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" font-size="48" fill="${color}" font-weight="800">${text}</text></svg>`}
+function renderCategories(){ $("#categories").innerHTML=categories.map(c=>`<button class="cat" data-cat="${c[0]}"><div class="cat-icon" style="background:${c[2]}18;color:${c[2]}"><b style="font-size:25px">${c[3]}</b></div><strong>${c[0]}</strong><span>${c[1]}</span></button>`).join("")}
+function renderCalendar(){
+ const y=calendarDate.getFullYear(),m=calendarDate.getMonth(); $("#monthTitle").textContent=`${y}년 ${m+1}월`;
+ const first=new Date(y,m,1).getDay(),last=new Date(y,m+1,0).getDate(),prevLast=new Date(y,m,0).getDate();let html="";
+ for(let i=0;i<42;i++){let d=i-first+1,actual=d,mm=m,yy=y,muted=false;if(d<1){actual=prevLast+d;mm=m-1;muted=true}else if(d>last){actual=d-last;mm=m+1;muted=true}const key=`${yy}-${String(mm+1).padStart(2,"0")}-${String(actual).padStart(2,"0")}`;const matches=programs.filter(p=>p.date===key);html+=`<button class="day ${muted?"muted":""} ${selectedDate===key?"selected":""}" data-date="${key}"><div class="day-num">${actual}</div>${matches.length?`<span class="count">${matches.length}건</span>`:""}</button>`}
+ $("#calendarDays").innerHTML=html;
+ document.querySelectorAll(".day").forEach(b=>b.onclick=()=>{selectedDate=b.dataset.date;$("#selectedDateText").textContent=`${selectedDate} 기준 프로그램`;renderCalendar();renderPrograms()})
+}
+function renderPrograms(){
+ let list=[...programs],kw=$("#keyword").value.trim().toLowerCase(),cat=$("#category").value,target=$("#target").value,date=$("#dateFilter").value;
+ if(kw)list=list.filter(p=>(p.title+p.agency+p.desc).toLowerCase().includes(kw));
+ if(cat)list=list.filter(p=>p.cat===cat);if(target)list=list.filter(p=>p.target===target);if(date)list=list.filter(p=>p.date<=date&&p.end>=date);
+ if(selectedDate)list=list.filter(p=>p.date===selectedDate);
+ if(currentStatus==="closing")list=list.filter(p=>statusOf(p)[1]==="closing");
+ if(currentStatus==="popular")list=list.sort((a,b)=>(b.booked/b.capacity)-(a.booked/a.capacity));
+ $("#resultText").textContent=`총 ${list.length}개의 프로그램`;
+ $("#programGrid").innerHTML=list.length?list.map(cardHTML).join(""):`<div class="empty">조건에 맞는 예약 프로그램이 없습니다.</div>`;
+ document.querySelectorAll(".detail-btn,.book-btn").forEach(b=>b.onclick=()=>openModal(+b.dataset.id))
+ updateSummary()
+}
+function cardHTML(p){
+ const [st,cls]=statusOf(p),left=Math.max(0,p.capacity-p.booked),pct=Math.min(100,Math.round(p.booked/p.capacity*100));
+ const bar=cls==="closing"?"#F5A000":cls==="closed"?"#8b969f":p.color;
+ return `<article class="card"><div class="thumb">${iconSVG(p.cat,p.color)}<span class="badge" style="color:${bar}">${p.special?"특별 접수 · ":""}${st}</span></div><div class="card-body"><div class="meta"><span class="tag">${p.cat}</span><span class="tag">${p.target}</span></div><h3>${p.title}</h3><div class="agency">${p.agency}</div><div class="date">운영일 ${p.date} ~ ${p.end}</div><div class="progress-row"><span>${left?left+"자리 남음":"모집 마감"}</span><span>${p.booked}명 / ${p.capacity}명</span></div><div class="progress"><span style="width:${pct}%;background:${bar}"></span></div><div class="card-actions"><button class="detail-btn" data-id="${p.id}">상세보기</button><button class="book-btn" data-id="${p.id}" ${left===0?"disabled":""}>예약하기</button></div></div></article>`
+}
+function updateSummary(){
+ const counts={available:0,closing:0,closed:0,special:0};programs.forEach(p=>{counts[statusOf(p)[1]]++;if(p.special)counts.special++});
+ $("#availableCount").textContent=counts.available;$("#closingCount").textContent=counts.closing;$("#closedCount").textContent=counts.closed;$("#specialCount").textContent=counts.special;
+ $("#myAll").textContent=bookings.length;$("#myPending").textContent=bookings.filter(x=>x.status==="승인대기").length;$("#myDone").textContent=bookings.filter(x=>x.status==="예약완료").length;$("#myUsed").textContent=bookings.filter(x=>x.status==="이용완료").length;
+ renderReservations();
+}
+function renderReservations(){
+ let list=myFilter==="전체"?bookings:bookings.filter(x=>x.status===myFilter);
+ $("#reservationList").innerHTML=list.length?list.map(b=>{const p=programs.find(x=>x.id===b.programId);return `<div class="reservation"><div class="reservation-info"><strong>${p.title}</strong><span>${p.agency} · ${p.date} · ${b.qty}명 · 예약번호 ${b.id}</span><div style="margin-top:5px;color:${b.status==="예약완료"?"#0756A5":b.status==="취소"?"#8b969f":"#D90070"};font-weight:800">${b.status}</div></div>${b.status!=="취소"&&b.status!=="이용완료"?`<button class="cancel" data-rid="${b.id}">예약 취소</button>`:""}</div>`}).join(""):`<div class="empty">해당 상태의 예약이 없습니다.</div>`;
+ document.querySelectorAll(".cancel").forEach(btn=>btn.onclick=()=>cancelBooking(btn.dataset.rid))
+}
+function openModal(id){
+ currentProgram=programs.find(p=>p.id===id);currentQty=1;$("#qty").textContent=currentQty;$("#modalTitle").textContent=currentProgram.title;$("#modal").classList.add("show");renderModalTab("detail");updateCapacity()
+}
+function closeModal(){$("#modal").classList.remove("show");currentProgram=null}
+function renderModalTab(tab){
+ document.querySelectorAll(".modal-tabs button").forEach(b=>b.classList.toggle("active",b.dataset.mtab===tab));
+ const p=currentProgram;if(!p)return;
+ if(tab==="detail")$("#modalContent").innerHTML=`<p><span class="tag">${p.cat}</span></p><p>${p.desc}</p><p><strong>운영기관</strong> ${p.agency}<br><strong>운영일</strong> ${p.date} ~ ${p.end}<br><strong>대상</strong> ${p.target}</p>`;
+ if(tab==="status"){const [s]=statusOf(p);$("#modalContent").innerHTML=`<div class="panel" style="padding:15px;background:#f8fafc"><strong>현재 ${s}</strong><p style="margin:6px 0">신청 ${p.booked}명 / 정원 ${p.capacity}명</p><div class="progress"><span style="width:${p.booked/p.capacity*100}%;background:${statusOf(p)[1]==="closing"?"#F5A000":"#0756A5"}"></span></div></div>`}
+ if(tab==="notice")$("#modalContent").innerHTML=`<p><strong>공지</strong><br>예약자는 운영일과 집결 장소를 신청 후 안내받을 수 있습니다.</p><div style="height:150px;border-radius:12px;background:#eef2f5;display:grid;place-items:center;color:#7a858f">지도/시설 위치 안내 영역</div>`;
+}
+function updateCapacity(){const left=currentProgram?currentProgram.capacity-currentProgram.booked:0;$("#capacityHint").textContent=`현재 ${left}석 신청 가능`;$("#submitBooking").disabled=left<currentQty}
+function toast(msg){$("#toast").textContent=msg;$("#toast").classList.add("show");setTimeout(()=>$("#toast").classList.remove("show"),2600)}
+function cancelBooking(rid){const b=bookings.find(x=>x.id===rid);if(!b)return;const p=programs.find(x=>x.id===b.programId);p.booked=Math.max(0,p.booked-b.qty);b.status="취소";toast("예약이 취소되었습니다.");renderPrograms()}
+$("#searchForm").onsubmit=e=>{e.preventDefault();selectedDate=null;renderCalendar();renderPrograms();document.querySelector("#programs").scrollIntoView({behavior:"smooth"})};
+$("#prevMonth").onclick=()=>{calendarDate.setMonth(calendarDate.getMonth()-1);renderCalendar()};$("#nextMonth").onclick=()=>{calendarDate.setMonth(calendarDate.getMonth()+1);renderCalendar()};
+document.querySelectorAll("#statusTabs .tab").forEach(b=>b.onclick=()=>{document.querySelectorAll("#statusTabs .tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");currentStatus=b.dataset.status;renderPrograms()});
+document.querySelectorAll("#myTabs .tab").forEach(b=>b.onclick=()=>{document.querySelectorAll("#myTabs .tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");myFilter=b.dataset.my;renderReservations()});
+document.querySelectorAll(".modal-tabs button").forEach(b=>b.onclick=()=>renderModalTab(b.dataset.mtab));
+$("#closeModal").onclick=closeModal;$("#modal").onclick=e=>{if(e.target.id==="modal")closeModal()};document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+$("#minus").onclick=()=>{if(currentQty>1){currentQty--;$("#qty").textContent=currentQty;updateCapacity()}};$("#plus").onclick=()=>{if(currentProgram&&currentQty<currentProgram.capacity-currentProgram.booked){currentQty++;$("#qty").textContent=currentQty;updateCapacity()}};
+$("#submitBooking").onclick=()=>{if(!currentProgram)return;const left=currentProgram.capacity-currentProgram.booked;if(currentQty>left){toast("신청 가능한 좌석이 부족합니다.");return}currentProgram.booked+=currentQty;bookings.push({id:"R-"+Math.floor(1000+Math.random()*9000),programId:currentProgram.id,qty:currentQty,status:"예약완료"});toast("예약 신청이 완료되었습니다.");closeModal();renderPrograms();document.querySelector("#my").scrollIntoView({behavior:"smooth"})};
+document.querySelectorAll("[data-scroll]").forEach(b=>b.onclick=()=>{document.getElementById(b.dataset.scroll).scrollIntoView({behavior:"smooth"});$("#mobileNav").classList.remove("show")});
+$("#menuBtn").onclick=()=>$("#mobileNav").classList.toggle("show");
+document.getElementById("categories").addEventListener("click",e=>{const b=e.target.closest(".cat");if(!b)return;$("#category").value=b.dataset.cat;selectedDate=null;renderCalendar();renderPrograms();document.querySelector("#programs").scrollIntoView({behavior:"smooth"})});
+renderCategories();renderCalendar();renderPrograms();
+</script>
+</body>
+</html>
